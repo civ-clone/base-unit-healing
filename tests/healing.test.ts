@@ -1,5 +1,5 @@
 import { HitPoints, Movement } from '@civ-clone/core-unit/Yields';
-import healingRules, { HealingOptions } from '../lib/healingRules';
+import healingRules, { HealingOptions, healAmount } from '../lib/healingRules';
 import damagedMovementRules, {
   damagedMovement,
 } from '../lib/damagedMovementRules';
@@ -44,7 +44,7 @@ const setUp = () => {
     cityRegistry = new CityRegistry(),
     landMassRegistry = new LandMassRegistry(),
     unitImprovementRegistry = new UnitImprovementRegistry(),
-    world = new World(new Generator(10, 1)),
+    world = new World(new Generator(1, 10)),
     tiles = Array.from(
       { length: 10 },
       (_, x: number): Tile => new Tile(x, 0, new Terrain(), world)
@@ -104,7 +104,7 @@ const setUp = () => {
       },
     };
 
-  // Squares 0 to 5 are one land mass, 6 to 7 another; 8 and 9 are sea.
+  // One row of 10 squares (`Generator` takes the height first). Squares 0 to 5 are one land mass, 6 to 7 another; 8 and 9 are sea.
   landMassRegistry.register(
     new LandMass(tiles.slice(0, 6)),
     new LandMass(tiles.slice(6, 8))
@@ -149,7 +149,9 @@ const setUp = () => {
   return {
     airbases,
     city,
+    cityRegistry,
     fortresses,
+    landMassRegistry,
     move,
     options,
     player,
@@ -307,6 +309,25 @@ describe('healingRules', (): void => {
 
     expect(Object.keys(healthy)).not.to.include('_damage');
     expect(destroyed.damage()).to.equal(5);
+  });
+
+  it('should measure the distance to a city with `Tile.distanceFrom` when the game gives no measure', (): void => {
+    const { city, cityRegistry, landMassRegistry, options, tiles, unit } =
+        setUp(),
+      { distance, ...withoutDistance } = options,
+      near = unit(tiles[3], 'land', 5),
+      far = unit(tiles[4], 'land', 5);
+
+    city(tiles[0]);
+
+    expect(distance).to.be.a('function');
+    expect(tiles[3].distanceFrom(tiles[0])).to.equal(3);
+    expect(
+      healAmount(cityRegistry, landMassRegistry, near, withoutDistance)
+    ).to.equal(2);
+    expect(
+      healAmount(cityRegistry, landMassRegistry, far, withoutDistance)
+    ).to.equal(1);
   });
 
   it('should name its rules with the prefix', (): void => {
