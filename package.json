@@ -1,6 +1,6 @@
 {
   "name": "@civ-clone/base-unit-healing",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Healing for damaged units: units that rest heal at the start of their player's turn, with bonuses near and in their own cities and full healing where the game says, and damaged units move more slowly.",
   "repository": "git@github.com:civ-clone/base-unit-healing.git",
   "keywords": [
