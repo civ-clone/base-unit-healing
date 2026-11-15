@@ -11,7 +11,7 @@ export interface DamagedMovementOptions {
   id?: string;
   /** How many steps a move is counted in (a road's share of a move, say): the scaled moves are truncated to a step. */
   stepsPerMove: number;
-  /** The fewest whole moves a damaged unit keeps (never more than it has undamaged). */
+  /** The fewest whole moves a damaged unit keeps, even if that is more than it has undamaged (as in the original). */
   minimum: (unit: Unit) => number;
   /** The units it applies to: all, without. */
   appliesTo?: (unit: Unit) => boolean;
@@ -20,7 +20,7 @@ export interface DamagedMovementOptions {
 /**
  * The moves a unit with `movement` moves undamaged has with `remaining` of `maximum` hit points left (OpenCiv2,
  *  `unit_max_moves`): `movement × remaining / maximum`, truncated to a step, then rounded up to a whole move, and at
- *  least `minimum` (but not above `movement`). A maximum below 1 counts as 1.
+ *  least `minimum`, even where that is more than `movement`, as in the original. A maximum below 1 counts as 1.
  */
 export const damagedMovement = (
   movement: number,
@@ -36,10 +36,7 @@ export const damagedMovement = (
         ? scaled
         : scaled + stepsPerMove - (scaled % stepsPerMove);
 
-  return Math.min(
-    movement,
-    Math.max(Math.round(minimum * stepsPerMove), rounded) / stepsPerMove
-  );
+  return Math.max(Math.round(minimum * stepsPerMove), rounded) / stepsPerMove;
 };
 
 /**

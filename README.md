@@ -41,8 +41,8 @@ more than the damage. Which facilities heal fully, and which units decay, are th
 ### Slower movement
 
 `movement × remaining / maximum`, counted in `stepsPerMove` steps of a move and truncated to a step, then rounded up to
-a whole move, at least `minimum(unit)` moves (OpenCiv2, `unit_max_moves`). Unlike the original, a minimum never gives a
-unit more than its undamaged movement (no unit in the original's data has fewer moves than its minimum). Only
+a whole move, at least `minimum(unit)` moves (OpenCiv2, `unit_max_moves`). As in the original, the minimum holds even
+where it is more than the unit's undamaged movement. Only
 `Movement`, what a unit's moves are reset to each turn, is changed, not the moves it has left.
 
 ## The mark is saved

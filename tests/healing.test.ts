@@ -354,12 +354,13 @@ describe('damagedMovement', (): void => {
     expect(damagedMovement(3, 8, 10, 3, 1)).to.equal(3);
   });
 
-  it('should keep the minimum, but never more than the undamaged moves', (): void => {
+  it('should keep the minimum, even above the undamaged moves, as `unit_max_moves` does', (): void => {
     expect(damagedMovement(3, 1, 30, 3, 1)).to.equal(1);
     // 5 moves at sea, a third of its hit points left: 5 → 6 → 2 moves, the minimum there.
     expect(damagedMovement(5, 10, 30, 3, 2)).to.equal(2);
     expect(damagedMovement(5, 1, 30, 3, 2)).to.equal(2);
-    expect(damagedMovement(1, 1, 10, 3, 2)).to.equal(1);
+    // A 1-move unit at sea, damaged, still gets the 2-move minimum.
+    expect(damagedMovement(1, 1, 10, 3, 2)).to.equal(2);
   });
 });
 
